@@ -1,0 +1,129 @@
+body{
+    background-color: #FFF;
+    font-weight: 200;
+    color: #444
+}
+h1,h2,h3,h4{
+    font-weight: 400;
+}
+.row{
+    padding: 0 1rem;
+}
+.panel-title{
+    background-color: rgb(104,158,195);
+    color:white;
+    padding: 1rem;
+    border-bottom: 1px solid #dddddd;
+}
+.panel-title h4{
+    margin: 0px;
+}
+.btn-connect{
+    padding-top: 1px;
+}
+.connected{
+    color: #aaa
+}
+.panel{
+    border: 1px solid #dddddd;
+    margin-bottom:1rem;
+    background-color: #FFF;
+}
+.panel-body{
+    padding:1rem;
+    margin: 0;
+    list-style: none;
+}
+.tag{
+    padding: 0.5rem 1rem;
+    margin-bottom: -1px;
+    cursor: default;
+}
+.tag-title{
+}
+.pure-form.inline-edit input{
+    padding: 0rem;
+    width: 3rem;
+    text-align: right;
+    border-radius:1px;
+}
+.pure-form.inline-edit{
+}
+.tag:last-child{
+}
+.pure-form.custom-radius input {
+    border-radius:1px;
+    border: 1px solid #dddddd;
+}
+.panel form{
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+i{
+    color: #CCC
+}
+.pull-right{
+    text-align: right;
+}
+.prop-value{
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.btn-box{
+    padding-left: 1rem;
+}
+.header{
+    background-color: rgb(59,117,158);
+    color:white;
+    box-shadow: 0 0 1px rgba(0,0,0,0.25);
+    margin-bottom: 2rem;
+}
+
+.panel-title i{
+    font-size: 1.0rem;
+}
+i{
+    color:white;
+}
+.tag i, .chart i{
+    color: #BBB;
+}
+.tag i.remove{
+    margin-right: 0.25rem;
+}
+i.remove:hover{
+    color: rgba(255,0,0,0.2);
+    cursor: pointer;
+}
+i.error{
+    color: #ff8600;
+}
+i.ok{
+    color: rgba(150,220,150,1);
+}
+.chart svg{
+    margin-top: 1rem;
+}
+.chart{
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.chart:last-child{
+    margin-bottom: 0;
+}
+.chart .remove{
+    text-align: right;
+}
+.chart svg{
+    margin-top: 1rem100;
+}
+
+.ct-series-a .ct-point{
+    stroke-width: 5px;
+    stroke: darkorange;
+}
+.ct-series-a .ct-line{
+    stroke-width: 2px;
+    stroke:darkorange;
+}

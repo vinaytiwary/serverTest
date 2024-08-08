@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="lib/font-awesome.min.css">
+    <link rel="stylesheet" href="lib/pure-min.css"/>
+<!--[if lte IE 8]>
+    <link rel="stylesheet" href="lib/grids-responsive-old-ie-min.css">
+<![endif]-->
+<!--[if gt IE 8]><!-->
+    <link rel="stylesheet" href="lib/grids-responsive-min.css">
+    <link rel="stylesheet" href="lib/chartist.min.css">
+<!--<![endif]-->
+
+    <link rel="stylesheet" href="index.css">
+    <title>Unserver Demo</title>
+</head>
+<body>
+<div id="root"><!--root-->
+    <div class="pure-g header"><!--title row-->
+        <div class="pure-u-1 pure-u-lg-1-5"></div>
+        <div class="pure-u-1 pure-u-lg-3-5">
+            <div class="row"><h2>Unserver Demo</h2></div>
+        </div>
+        <div class="pure-u-1 pure-u-lg-1-5"></div>
+    </div><!--title row-->
+
+    <div class="pure-g top-row"><!--top row-->
+        <div class="pure-u-1 pure-u-lg-1-5"></div>
+        <div class="pure-u-1 pure-u-lg-3-5"><!--connectpanel-->
+            <div class="row">
+                <div class="panel">
+                    <div class="panel-title pure-g">
+                        <div class="pure-u-4-5">
+                            <h4>Connect to Unserver</h4>
+                        </div>
+                        <div class="pure-u-1-5 pull-right">
+                            <i 
+                                v-if="comStatus!=='ok' && isConnected"
+                                title="trying to communicate"
+                                class="fa fa-spinner fa-spin fa-3x fa-fw" aria-hidden="true"></i>
+                            <i 
+                                v-if="comStatus==='ok'"
+                                title="unserver online"
+                                class="ok fa fa-check" aria-hidden="true"></i>
+                            <i 
+                                v-if="comStatus==='error'" 
+                                title="communication error"
+                                class="error fa fa-exclamation-triangle" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <form class="custom-radius pure-form">
+                            <div class="pure-u-3-4">
+                                <input type="text" 
+                                    class="pure-input-1"  
+                                    placeholder="Enter Unserver URL here" 
+                                    spellcheck="false"
+                                    v-model="server"
+                                    v-bind:disabled="isConnected"/>
+                            </div><!--
+                         --><div class="pure-u-1-4 btn-connect">
+                                <div class="btn-box">
+                                    <button 
+                                        v-on:click.prevent="toggleConnection"
+                                        class="pure-u-1 pure-button">{{ isConnected ? 'Disconnect' : 'Connect'}}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!--connectpanel-->
+        <div class="pure-u-1 pure-u-lg-1-5"></div>
+    </div><!--top row-->
+
+    <div class="pure-g main"><!--main row-->
+        <div class="pure-u-1 pure-u-lg-1-5"></div>
+        <div class="pure-u-1 pure-u-lg-3-5">
+            <div class="pure-g">
+                <div class="pure-u-1 pure-u-xl-7-12"><!--leftcolumn-->
+                    <div class="row">
+                         <div class="panel">
+                            <div class="panel-title">
+                                <h4>Add Properties</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form class="custom-radius pure-form" v-on:submit.prevent="add">
+                                    <div class="pure-u-3-4">
+                                        <input type="text" 
+                                            spellcheck="false"
+                                            class="pure-input-1"  placeholder="Enter a property address to watch [tag.property]" v-model:value="propertyInput"/>
+                                    </div><!--
+                                 --><div class="pure-u-1-4 btn-connect">
+                                        <div class="btn-box">
+                                            <button class="pure-u-1 pure-button" 
+                                                v-bind:disabled="!isPropertyInputValid">Add</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                         </div>
+                        <div class="panel">
+                            <div class="panel-title">
+                                <h4>Watch / Modify Properties</h4>
+                            </div>
+                            <ul class="panel-body">
+                                <li class="tag" v-for="p in properties">
+                                    <div class="pure-g">
+                                    <div class="pure-u-3-4 tag-title">
+                                        <i class="fa fa-times remove" 
+                                            aria-hidden="true" 
+                                            v-on:click.stop="remove(p)"></i>
+                                            <span>{{p.tag}}.{{p.name}}</span>
+                                        </div><!--
+                                    --><div class="pure-u-1-4 pull-right">
+                                            <span 
+                                                v-if="!p.editOn" 
+                                                v-on:click="edit(p)"
+                                                class="prop-value">{{p.value}}
+                                                <i class="fa fa-line-chart" 
+                                                aria-hidden="true"
+                                                title="show chart"
+                                                v-on:click.stop="addChart(p.id)"></i>
+                                            </span>
+                                            <form 
+                                                v-if="p.editOn" 
+                                                class="pure-form inline-edit"
+                                                v-on:submit.prevent="save(p)">
+                                                <input class="pure-input  inline-edit" 
+                                                    ref="editor"
+                                                    v-model="p.editor"
+                                                    v-on:blur="save(p)"
+                                                    type="text"/>
+                                        
+                                            </form>
+                                            
+                                        </div>
+                                        </div>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div><!--leftcolumn-->
+                <div class="pure-u-1 pure-u-xl-5-12"><!--rightcolumn-->
+                    <div class="row">
+                        <div class="panel" v-if="charts.length > 0">
+                            <div class="panel-title">
+                                <h4>Charts</h4>
+                            </div>
+                            <div class="">
+                                <ul class="panel-body">
+                                    <li v-for="c in charts" class="chart">
+                                        <div class="remove">
+                                            <i class="fa fa-times remove" 
+                                                aria-hidden="true" 
+                                                title="close"
+                                                v-on:click.stop="removeChart(c)"></i>
+                                        </div>
+                                            <property-chart class=""
+                                                v-bind:series="c.series"
+                                                v-bind:labels="c.labels"
+                                                v-bind:address="c.address"></property-chart>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div><!--rightcolumn-->
+            </div>
+        </div>
+        <div class="pure-u-1 pure-u-lg-1-5"></div>
+    </div><!--main row-->
+</div><!--root-->
+
+<script src="lib/vue.js"></script>
+<script src="lib/chartist.min.js"></script>
+<script src="unserver.js"></script>
+<script src="config.js"></script>
+<script src="index.js"></script>
+</body>
+</html>
